@@ -38,9 +38,23 @@ const rl = readline.createInterface({
 });
 
 rl.question("masukan nama anda : ", (nama) => {
-  rl.question("masukan umur anda : ", (umur) => {
-    console.log(`terimakasih ${nama}`);
-    console.log(`anda berumur ${umur} tahun`);
+  rl.question("masukan nomer telfon anda : ", (noHP) => {
+    const contact = { nama, noHP };
+
+    const file = fs.readFileSync("data/contacts.json", "utf-8");
+    const contacts = JSON.parse(file);
+
+    contacts.push(contact);
+    try {
+      fs.writeFileSync("data/contacts.json", JSON.stringify(contacts));
+    } catch (e) {
+      console.log(e);
+    }
+
+    console.log("Terima Kasih Telah Memasukan Data");
+
+    console.log(contacts);
+
     rl.close();
   });
 });
