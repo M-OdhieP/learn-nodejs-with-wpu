@@ -51,11 +51,26 @@ yargs.command({
       type: "string",
     },
   },
-  handler() {
+  handler(argv) {
     contacts.detailContact(argv.nama);
   },
 });
 
+//menghapus sebuah kontak
+yargs.command({
+  command: "delete",
+  describe: "delete sebuah kontak berdasarkan nama",
+  builder: {
+    nama: {
+      describe: "Nama Lengkap",
+      demandOption: true,
+      type: "string",
+    },
+  },
+  handler(argv) {
+    contacts.deleteContact(argv.nama);
+  },
+});
 yargs.parse();
 // const contacts = require("./contacts");
 
