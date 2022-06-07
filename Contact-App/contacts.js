@@ -1,10 +1,11 @@
 const fs = require("fs");
-
-const readline = require("readline");
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
+const chalk = require("chalk");
+const validator = require("validator");
+// const readline = require("readline");
+// const rl = readline.createInterface({
+//   input: process.stdin,
+//   output: process.stdout,
+// });
 
 const dirPath = "./data";
 if (!fs.existsSync(dirPath)) {
@@ -16,19 +17,50 @@ if (!fs.existsSync(dataPath)) {
   fs.writeFileSync(dataPath, "[]", "utf-8");
 }
 
-const tulisPertanyaan = (pertanyaan) => {
-  return new Promise((resolve, reject) => {
-    rl.question(pertanyaan, (email) => {
-      resolve(email);
-    });
-  });
+// const tulisPertanyaan = (pertanyaan) => {
+//   return new Promise((resolve, reject) => {
+//     rl.question(pertanyaan, (email) => {
+//       resolve(email);
+//     });
+//   });
+// };
+const messages = (messege) => {
+  console.log(chalk.red.inverse.bold(messege));
+};
+
+const loadContact = () => {
+  const file = fs.readFileSync("data/contacts.json", "utf-8");
+  const contacts = JSON.parse(file);
+  return contacts;
 };
 
 const simpanContact = (nama, email, noHp) => {
   const contact = { nama, email, noHp };
 
-  const file = fs.readFileSync("data/contacts.json", "utf-8");
-  const contacts = JSON.parse(file);
+  const contacts = loadContact();
+  //   const file = fs.readFileSync("data/contacts.json", "utf-8");
+  //   const contacts = JSON.parse(file);
+
+  //cet duplikat
+  const duplikat = contacts.find((contact) => contact.nama === nama);
+  if (duplikat) {
+    messages("contact sudah terdaftar, gunakan nama lain!");
+    return false;
+  }
+
+  //cek Email
+  if (email) {
+    if (!validator.isEmail(email)) {
+      messages("Email tidak valid!, silahkan coba lagi");
+      return false;
+    }
+  }
+
+  //cek NoHp
+  if (!validator.isMobilePhone(noHp, "id-ID")) {
+    messages("Format Nomer HP tidak Valid!");
+    return false;
+  }
 
   contacts.push(contact);
   try {
@@ -37,14 +69,22 @@ const simpanContact = (nama, email, noHp) => {
     console.log(e);
   }
 
-  console.log("Terima Kasih Telah Memasukan Data");
-
+  console.log(chalk.green.inverse.bold("Terima Kasih Telah Memasukan Data"));
   console.log(contacts);
-
-  rl.close();
 };
 
+const listContact = () => {
+  const contacts = loadContact();
+  console.log(chalk.blue.inverse.bold("Daftar Kontak : "));
+  contacts.forEach((contact, i) => {
+    console.log(`${i + 1}. ${contact.nama} - ${contact.noHp}`);
+  });
+};
+
+const detailContact = () => {};
+
 module.exports = {
-  tulisPertanyaan,
   simpanContact,
+  listContact,
+  detailContact,
 };
