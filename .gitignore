@@ -1,4 +1,2 @@
 # dependencies
-/14-express-web-server/node_modules
-
-**/node_modules
+node_modules/
